@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     val STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     val CAMERA_CODE = 98
     val STORAGE_CODE = 99
+    var lunchbox = ""
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -111,6 +112,16 @@ class MainActivity : AppCompatActivity() {
         val fineName = SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis())
         return fineName
     }
+
+    fun GetAlbum()
+    {
+        if (checkPermission(STORAGE, STORAGE_CODE)) {
+            val itt = Intent(Intent.ACTION_PICK)
+            itt.type = MediaStore.Images.Media.CONTENT_TYPE
+            startActivityForResult(itt, STORAGE_CODE)
+        }
+    }
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -125,6 +136,10 @@ class MainActivity : AppCompatActivity() {
                         binding.imageView.setImageURI(uri)
                     }
                 }
+                STORAGE_CODE -> {
+                    val uri = data?.data
+                    binding.imageView.setImageURI(uri)
+                }
             }
         }
     }
@@ -137,8 +152,21 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        binding.lunchboxRadio.setOnCheckedChangeListener{
+            group, checkedId ->
+            when(checkedId){
+                R.id.radio_default -> lunchbox = ""
+                R.id.radio_lunchbox -> lunchbox = "lunchbox"
+
+            }
+        }
+
         binding.btnCamera.setOnClickListener() {
             CallCamera()
+        }
+
+        binding.btnGallery.setOnClickListener() {
+            GetAlbum()
         }
         //setContentView(R.layout.activity_main)
 
